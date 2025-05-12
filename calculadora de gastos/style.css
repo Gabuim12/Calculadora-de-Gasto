@@ -1,54 +1,81 @@
-*{
+:root {
+    --bg: #f8f9fa;
+    --text: #000;
+    --card: white;
+    --button: #28a745;
+    --button-hover: #218838;
+  }
+  
+  body.dark {
+    --bg: #121212;
+    --text: #fff;
+    --card: #1e1e1e;
+    --button: #4caf50;
+    --button-hover: #388e3c;
+  }
+  
+  * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: Arial, Helvetica, sans-serif;
-}
-
-body{
-    background-color: #f8f9fa;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  body {
+    background-color: var(--bg);
+    color: var(--text);
     padding: 20px;
-}
-
-.container{
+    transition: 0.3s;
+  }
+  
+  .container {
     max-width: 400px;
     margin: auto;
-    background-color: white;
+    background-color: var(--card);
     border-radius: 15px;
     padding: 20px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-}
-h1{
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  h1 {
     text-align: center;
-    margin-bottom: 10px ;
-}
-form{
+    margin-bottom: 15px;
+  }
+  
+  form,
+  #filters {
     display: flex;
     flex-direction: column;
     gap: 10px;
-}
-input, select, button{
+    margin-bottom: 15px;
+  }
+  
+  input,
+  select,
+  button {
     padding: 12px;
     border-radius: 10px;
     border: 1px solid #ccc;
     font-size: 16px;
-}
-button{
-    background-color: #29a745;
+  }
+  
+  button {
+    background-color: var(--button);
     color: white;
     font-weight: bold;
     border: none;
-    cursor:pointer;
+    cursor: pointer;
     transition: 0.3s;
-
-}
-button:hover {
-    background-color: #218838;
   }
   
-  #total {
-    margin: 20px 0;
-    font-size: 18px;
+  button:hover {
+    background-color: var(--button-hover);
+  }
+  
+  #total,
+  #summary {
+    margin: 10px 0;
+    font-size: 16px;
     font-weight: bold;
     text-align: center;
   }
@@ -60,8 +87,20 @@ button:hover {
   #expense-list li {
     padding: 10px;
     margin-bottom: 8px;
-    background-color: #eee;
+    background-color: #ddd;
     border-radius: 8px;
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    color: #333;
   }
+  
+  body.dark #expense-list li {
+    background-color: #333;
+    color: #fff;
+  }
+  
+  #toggle-theme {
+    margin-bottom: 10px;
+  }
+  
