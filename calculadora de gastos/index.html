@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Gasto</title>
+</head>
+<body>
+    <div class="container">
+        <h1>💸 Meus Gastos</h1>
+        <form id="expense-form">
+        <input type="number" id="amount" placeholder="Valor (R$)" required>
+        <input type="text" id="description" placeholder="Descrição" required>
+        <select id="category">
+            <option value="Alimentação">🍔 Alimentação</option>
+            <option value="Transporte">🚌 Transporte</option>
+            <option value="Lazer">🎮 Lazer</option>
+            <option value="Outros">📦 Outros</option>
+        </select>
+        <button type="submit">Adicionar</button>
+    </form>
+    <div id="total">Total: R$ 0,00</div>
+    <ul id="expense-list"></ul>
+    </div>
+</body>
+<script src="script.js"></script>
+</html>
