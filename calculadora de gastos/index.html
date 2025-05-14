@@ -3,44 +3,76 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Calculadora de Gastos</title>
+  <title>Organize+ Finanças</title>
   <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script defer src="script.js"></script>
 </head>
 <body>
-  <div class="container">
-    <h1>💸 Meus Gastos</h1>
+  <!-- Header Fixo -->
+  <header class="topbar">
+    <div class="logo">Organize+</div>
+    <nav>
+      <ul>
+        <li><a href="#recursos">Recursos</a></li>
+        <li><a href="#grafico">Gráficos</a></li>
+        <li><a href="#gastos">Gastos</a></li>
+        <li><button class="btn cta">Teste gratuitamente</button></li>
+      </ul>
+    </nav>
+  </header>
 
-    <button id="toggle-theme">🌙 Modo Escuro</button>
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-text">
+      <h1>Controle financeiro pessoal com toda a <span class="highlight">praticidade</span> que a planilha não te oferece.</h1>
+      <p>Visualize seus gastos, acompanhe seu saldo e tome o controle das suas finanças com facilidade.</p>
+      <button class="btn grande">Comece já</button>
+    </div>
+    <div class="hero-img">
+      <img src="img/ChatGPT Image 14 de mai. de 2025, 16_57_01.png" alt="Imagem de preview" />
+    </div>
+  </section>
 
+  <!-- Aplicação -->
+  <main class="container" id="gastos">
+    <h2>Adicione seus Gastos</h2>
     <form id="expense-form">
-      <input type="number" id="amount" placeholder="Valor (R$)" required />
-      <input type="text" id="description" placeholder="Descrição" required />
-      <select id="category">
-        <option value="Alimentação">🍔 Alimentação</option>
-        <option value="Transporte">🚌 Transporte</option>
-        <option value="Lazer">🎮 Lazer</option>
-        <option value="Outros">📦 Outros</option>
+      <input type="text" id="expense-name" placeholder="Nome do gasto" required />
+      <input type="number" id="expense-value" placeholder="Valor (R$)" required />
+      <select id="expense-category">
+        <option value="fixo">Fixo</option>
+        <option value="variável">Variável</option>
       </select>
-      <button type="submit">Adicionar</button>
+      <button type="submit" class="btn">Adicionar</button>
     </form>
 
-    <div id="filters">
-      <label for="filter-category">Filtrar por categoria:</label>
-      <select id="filter-category">
-        <option value="Todas">Todas</option>
-        <option value="Alimentação">Alimentação</option>
-        <option value="Transporte">Transporte</option>
-        <option value="Lazer">Lazer</option>
-        <option value="Outros">Outros</option>
-      </select>
+    <div class="saldo-box">
+      <input type="number" id="renda" placeholder="Sua renda (R$)" />
+      <button onclick="calcularSaldo()" class="btn">Calcular Saldo</button>
     </div>
 
-    <div id="summary"></div>
-    <div id="total">Total: R$ 0,00</div>
+    <div id="saldo-display">Saldo: R$ 0,00</div>
+    <div id="total">Total de Gastos: R$ 0,00</div>
+
+    <div class="filtros">
+      <select id="filter-category">
+        <option value="todos">Todos</option>
+        <option value="fixo">Fixos</option>
+        <option value="variável">Variáveis</option>
+      </select>
+      <button onclick="filtrarGastos()" class="btn">Filtrar</button>
+    </div>
 
     <ul id="expense-list"></ul>
-  </div>
+  </main>
 
-  <script src="script.js"></script>
+  <!-- Gráfico -->
+  <section class="grafico-section" id="grafico">
+    <h2>Gráfico de Gastos por Categoria</h2>
+    <canvas id="graficoGastos" width="400" height="400"></canvas>
+  </section>
+
+  
 </body>
 </html>

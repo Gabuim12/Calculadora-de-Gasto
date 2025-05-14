@@ -1,74 +1,117 @@
-const form = document.getElementById('expense-form');
-const amountInput = document.getElementById('amount');
-const descriptionInput = document.getElementById('description');
-const categoryInput = document.getElementById('category');
-const list = document.getElementById('expense-list');
-const totalDisplay = document.getElementById('total');
-const summaryDisplay = document.getElementById('summary');
-const filterSelect = document.getElementById('filter-category');
-const toggleTheme = document.getElementById('toggle-theme');
+const form = document.getElementById("expense-form");
+const list = document.getElementById("expense-list");
+const totalDisplay = document.getElementById("total");
+const saldoDisplay = document.getElementById("saldo-display");
+const rendaInput = document.getElementById("renda");
+const toggleTheme = document.getElementById("toggle-theme");
 
-let expenses = JSON.parse(localStorage.getItem('expenses')) || [];
+let despesas = [];
+let renda = 0;
+let grafico;
 
-function renderExpenses() {
-  list.innerHTML = '';
-  const selectedCategory = filterSelect.value;
-  let total = 0;
-  let summary = {};
+form.addEventListener("submit", function (e) {
+  e.preventDefault();
+  const nome = document.getElementById("expense-name").value;
+  const valor = parseFloat(document.getElementById("expense-value").value);
+  const categoria = document.getElementById("expense-category").value;
 
-  expenses.forEach((expense, index) => {
-    if (selectedCategory !== "Todas" && expense.category !== selectedCategory) return;
+  if (nome && !isNaN(valor)) {
+    despesas.push({ nome, valor, categoria });
+    form.reset();
+    atualizarLista();
+    atualizarGrafico();
+  }
+});
 
-    total += parseFloat(expense.amount);
-    summary[expense.category] = (summary[expense.category] || 0) + parseFloat(expense.amount);
+function atualizarLista(filtro = "todos") {
+  list.innerHTML = "";
+  const despesasFiltradas = filtro === "todos" ? despesas : despesas.filter(d => d.categoria === filtro);
 
-    const li = document.createElement('li');
+  despesasFiltradas.forEach((despesa, index) => {
+    const li = document.createElement("li");
     li.innerHTML = `
-      <span>${expense.category}: ${expense.description} - R$ ${parseFloat(expense.amount).toFixed(2)}</span>
-      <button onclick="removeExpense(${index})">❌</button>
+      ${despesa.nome} - R$ ${despesa.valor.toFixed(2)} 
+      <button class="edit-btn" onclick="editarDespesa(${index})">✏️ Editar</button>
+      <button onclick="removerGasto(${index})">❌</button>
     `;
     list.appendChild(li);
   });
 
-  totalDisplay.textContent = `Total: R$ ${total.toFixed(2)}`;
-
-  let summaryText = Object.entries(summary).map(
-    ([cat, val]) => `${cat}: R$ ${val.toFixed(2)}`
-  ).join(' | ');
-  summaryDisplay.textContent = summaryText || 'Sem gastos nesta categoria.';
-
-  localStorage.setItem('expenses', JSON.stringify(expenses));
+  const total = despesas.reduce((acc, d) => acc + d.valor, 0);
+  totalDisplay.innerText = `Total de Gastos: R$ ${total.toFixed(2)}`;
+  atualizarSaldo();
 }
 
-function removeExpense(index) {
-  if (confirm('Deseja remover este gasto?')) {
-    expenses.splice(index, 1);
-    renderExpenses();
+function editarDespesa(index) {
+  const novaDescricao = prompt("Novo nome do gasto:", despesas[index].nome);
+  const novoValor = parseFloat(prompt("Novo valor (R$):", despesas[index].valor));
+  if (!isNaN(novoValor) && novaDescricao.trim() !== "") {
+    despesas[index].nome = novaDescricao;
+    despesas[index].valor = novoValor;
+    atualizarLista();
+    atualizarGrafico();
   }
 }
 
-form.addEventListener('submit', (e) => {
-  e.preventDefault();
+function removerGasto(index) {
+  despesas.splice(index, 1);
+  atualizarLista(document.getElementById("filter-category").value);
+  atualizarGrafico();
+}
 
-  const expense = {
-    amount: amountInput.value,
-    description: descriptionInput.value,
-    category: categoryInput.value
-  };
+function filtrarGastos() {
+  const filtro = document.getElementById("filter-category").value;
+  atualizarLista(filtro);
+}
 
-  expenses.push(expense);
-  amountInput.value = '';
-  descriptionInput.value = '';
-  categoryInput.selectedIndex = 0;
+function calcularSaldo() {
+  renda = parseFloat(rendaInput.value) || 0;
+  atualizarSaldo();
+}
 
-  renderExpenses();
+function atualizarSaldo() {
+  const total = despesas.reduce((acc, d) => acc + d.valor, 0);
+  const saldo = renda - total;
+  saldoDisplay.innerText = `Saldo: R$ ${saldo.toFixed(2)}`;
+  saldoDisplay.style.color = saldo >= 0 ? "#28a745" : "#dc3545";
+}
+
+function atualizarGrafico() {
+  const categorias = {};
+  despesas.forEach(d => {
+    categorias[d.categoria] = (categorias[d.categoria] || 0) + d.valor;
+  });
+
+  const labels = Object.keys(categorias);
+  const data = Object.values(categorias);
+
+  if (grafico) grafico.destroy();
+
+  const ctx = document.getElementById("graficoGastos").getContext("2d");
+  grafico = new Chart(ctx, {
+    type: "pie",
+    data: {
+      labels,
+      datasets: [{
+        label: "Gastos por Categoria",
+        data,
+        backgroundColor: ["#ff6384", "#36a2eb"]
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: 'bottom'
+        }
+      }
+    }
+  });
+}
+
+toggleTheme.addEventListener("click", () => {
+  document.body.classList.toggle("dark");
+  toggleTheme.textContent = document.body.classList.contains("dark")
+    ? "☀️ Light Mode"
+    : "🌙 Dark Mode";
 });
-
-filterSelect.addEventListener('change', renderExpenses);
-
-toggleTheme.addEventListener('click', () => {
-  document.body.classList.toggle('dark');
-  toggleTheme.textContent = document.body.classList.contains('dark') ? '☀️ Modo Claro' : '🌙 Modo Escuro';
-});
-
-renderExpenses();
